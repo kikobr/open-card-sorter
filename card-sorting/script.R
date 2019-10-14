@@ -10,7 +10,12 @@ datasets = list(
   list(name="Rafael", file="Rafael.csv")
 )
 
+# plot hierarchical clustering
 clusters <- getCardSortingClusters(datasets)
-plot(clusters$hclust)
+plot(clusters$hclust, main = "Dendrograma com clusterização hierárquica")
 median_clusters = 2
 rect.hclust(clusters$hclust, k = median_clusters, border = 2:6)
+
+# plot table
+table <- getClusterTable(hclust=clusters$hclust, k=median_clusters)
+View(table)

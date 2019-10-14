@@ -4,7 +4,6 @@ getCardSortingClusters <- function(datasets){
   cards <- c()
   for(i in 1:length(datasets)){
     ds <- datasets[[i]]
-    print(ds$name)
     if(!is.null(ds$file)){
       datasets[[i]]$data = read.csv(file=ds$file, header = T, sep = ",");
       for(v in datasets[[i]]$data){
@@ -75,4 +74,18 @@ getCardSortingClusters <- function(datasets){
     dist_matrix = dist_matrix
   )
   return(res)
+}
+
+getClusterTable <- function(hclust=NULL, k=2){
+  cut = cutree(hclust, k=k)
+  cut_df = data.frame(cut)
+  colnames(cut_df) <- c("Cluster")
+  cut_df$Card = rownames(cut_df)
+  rownames(cut_df) <- NULL
+  for(c in unique(cut_df$Cluster)){
+    # get list of cards for this cluster number and complete vector with empty strings
+    cards = cut_df[cut_df$Cluster == c, "Card"]
+    cut_df[paste("Cluster ", c)] = c(cards, vector(mode="character", length =(nrow(cut_df)-length(cards)) ))
+  }
+  return(cut_df[,-c(1,2)])
 }
