@@ -9,9 +9,11 @@
 
 library(shiny)
 library(rlist)
+library(ggplot2)
+library(ggdendro)
 
-setwd("~/Documents/design-science-r/card-sorting/")
 source("cluster-card-sorting.R")
+source("ggdendro.R")
 
 # load datasets
 default_datasets = list(
@@ -24,6 +26,8 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Card Sorting"),
+    h4("Custerização Hierárquica", style="font-size: 16px; color: gray;"),
+    br(),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -38,13 +42,13 @@ ui <- fluidPage(
             sliderInput("clusters",
                         "Escolha a quantidade de clusters",
                         min = 2,
-                        max = 10,
+                        max = 30,
                         value = 3)
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("hclustPlot"),
+           plotOutput("hclustPlot", height=700),
            tableOutput("clustersTable")
         )
     )
@@ -75,8 +79,22 @@ server <- function(input, output) {
     output$hclustPlot <- renderPlot({
         clusters <- clusters()
         median_clusters = input$clusters
-        plot(clusters$hclust, main = "Dendrograma com clusterização hierárquica", xlab = "", sub = "")
-        rect.hclust(clusters$hclust, k = median_clusters, border = 2:6)
+        
+        hcdata <- dendro_data_k(clusters$hclust, median_clusters)
+        plot_ggdendro(
+            hcdata,
+            direction   = "lr", # horizontal
+            #direction   = "tb", # vertical
+            expand.y    = 0.5,
+            label.size  = 4.5,
+            branch.size = 1
+        ) +
+            theme_light() +
+            ylab("Distância (quanto menor, mais próximo)") +
+            xlab("") +
+            theme(panel.border = element_blank())+
+            scale_fill_continuous(guide = guide_legend(title = NULL))
+        
     })
 }
 

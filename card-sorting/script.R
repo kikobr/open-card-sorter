@@ -1,8 +1,8 @@
 # set your project folder
-setwd("~/Documents/design-science-r/card-sorting/")
 
 # load clustering function
 source("cluster-card-sorting.R")
+source("ggdendro.R")
 
 # load datasets
 datasets = list(
@@ -12,9 +12,22 @@ datasets = list(
 
 # plot hierarchical clustering
 clusters <- getCardSortingClusters(datasets)
-plot(clusters$hclust, main = "Dendrograma com clusterização hierárquica")
 median_clusters = 2
-rect.hclust(clusters$hclust, k = median_clusters, border = 2:6)
+hcdata <- dendro_data_k(clusters$hclust, median_clusters)
+plot_ggdendro(
+  hcdata,
+  direction   = "lr", # horizontal
+  #direction   = "tb", # vertical
+  expand.y    = 0.5,
+  label.size  = 4.5,
+  branch.size = 1
+) +
+  theme_light() +
+  ylab("Distância (quanto menor, mais próximo)") +
+  xlab("") +
+  theme(panel.border = element_blank())+
+  scale_fill_continuous(guide = guide_legend(title = NULL))
+
 
 # plot table
 table <- getClusterTable(hclust=clusters$hclust, k=median_clusters)
