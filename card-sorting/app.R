@@ -74,7 +74,7 @@ server <- function(input, output) {
     })
     output$clustersTable <- renderTable({
         clusters <- clusters()
-        return( getClusterTable(hclust=clusters$hclust, k=input$clusters) )
+        return( getClusterTable(hclust=clusters$hclust, k=input$clusters, index_df=clusters$index_df) )
     })
     output$hclustPlot <- renderPlot({
         clusters <- clusters()

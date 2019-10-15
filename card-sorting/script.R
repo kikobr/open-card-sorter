@@ -12,6 +12,7 @@ datasets = list(
 
 # plot hierarchical clustering
 clusters <- getCardSortingClusters(datasets)
+
 median_clusters = 2
 hcdata <- dendro_data_k(clusters$hclust, median_clusters)
 plot_ggdendro(
@@ -30,5 +31,5 @@ plot_ggdendro(
 
 
 # plot table
-table <- getClusterTable(hclust=clusters$hclust, k=median_clusters)
+table <- getClusterTable(hclust=clusters$hclust, k=median_clusters, index_df=clusters$index_df)
 View(table)
