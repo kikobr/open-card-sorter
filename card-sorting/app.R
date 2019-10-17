@@ -9,47 +9,56 @@
 
 library(shiny)
 library(rlist)
-library(ggplot2)
-library(ggdendro)
 
 source("cluster-card-sorting.R")
 source("ggdendro.R")
 
 # load datasets
 default_datasets = list(
-    list(name="Alfredo", file="Alfredo.csv"),
-    list(name="Rafael", file="Rafael.csv")
+    list(name="Alfredo", file="data/Alfredo.csv"),
+    list(name="Rafael", file="data/Rafael.csv")
 )
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Card Sorting"),
-    h4("Custerização Hierárquica", style="font-size: 16px; color: gray;"),
+    titlePanel("Card Sorting Analysis"),
     br(),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            fileInput("files", "Carregar CSVs",
+            width=3,
+            fileInput("files", "Load data (CSV only)",
                 accept = c(
                     "text/csv",
                     "text/comma-separated-values,text/plain",
                     ".csv"),
                 multiple = T
             ),
-            sliderInput("clusters",
-                        "Escolha a quantidade de clusters",
-                        min = 2,
-                        max = 30,
-                        value = 3)
+            uiOutput("clustersInput"),
+            uiOutput("info"),
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("hclustPlot", height=700),
-           tableOutput("clustersTable")
+            tabsetPanel(
+                tabPanel(
+                    "Hierarchical clustering",
+                    div(
+                        plotOutput("hclustPlot", height=700),
+                        tableOutput("clustersTable")
+                    )
+                ),
+                tabPanel(
+                    "Confidence / Correlation",
+                    div(
+                        plotOutput("confPlot", height=900),
+                        tableOutput("confTable")
+                    )
+                )
+            )
         )
     )
 )
@@ -72,29 +81,44 @@ server <- function(input, output) {
         clusters <- getCardSortingClusters(datasets)
         return(clusters)
     })
-    output$clustersTable <- renderTable({
-        clusters <- clusters()
-        return( getClusterTable(hclust=clusters$hclust, k=input$clusters, index_df=clusters$index_df) )
+    output$info <- renderUI({
+        div(
+            hr(),
+            h5("Imported dataset:", style="font-weight: bold;"),
+            p("Clusters median: ", clusters()$median_clusters),
+            p("Unique cards: ", length(clusters()$cards)),
+            p("Participants: ", length(unique(clusters()$base_df$Name)))
+        )
+    })
+    output$clustersInput <- renderUI({
+        sliderInput("clusters",
+            "Choose clusters number",
+            min = 1,
+            max = nrow(clusters()$dist_matrix),
+            step = 1,
+            value = clusters()$median_clusters)
     })
     output$hclustPlot <- renderPlot({
         clusters <- clusters()
-        median_clusters = input$clusters
-        
-        hcdata <- dendro_data_k(clusters$hclust, median_clusters)
-        plot_ggdendro(
-            hcdata,
-            direction   = "lr", # horizontal
-            #direction   = "tb", # vertical
-            expand.y    = 0.5,
-            label.size  = 4.5,
-            branch.size = 1
-        ) +
-            theme_light() +
-            ylab("Distância (quanto menor, mais próximo)") +
-            xlab("") +
-            theme(panel.border = element_blank())+
-            scale_fill_continuous(guide = guide_legend(title = NULL))
-        
+        if(is.null(input$clusters)) return()
+        getClustersPlot(clusters$hclust, k = input$clusters)
+    })
+    output$clustersTable <- renderTable({
+        clusters <- clusters()
+        if(is.null(input$clusters)) return()
+        return( getClusterTable(hclust=clusters$hclust, k=input$clusters, index_df=clusters$index_df) )
+    })
+    output$confPlot <- renderPlot({
+        clusters <- clusters()
+        if(is.null(input$clusters)) return()
+        getConfPlot(clusters$conf_matrix)
+    })
+    output$confTable <- renderTable({
+        clusters <- clusters()
+        if(is.null(input$clusters)) return()
+        table <- as.data.frame(round(clusters$conf_matrix, digits = 2))
+        table = cbind( data.frame(colnames(table)), table )
+        return( table )
     })
 }
 

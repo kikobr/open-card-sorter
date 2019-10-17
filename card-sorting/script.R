@@ -6,30 +6,19 @@ source("ggdendro.R")
 
 # load datasets
 datasets = list(
-  list(name="Alfredo", file="Alfredo.csv"),
-  list(name="Rafael", file="Rafael.csv")
+  list(name="Alfredo", file="data/Alfredo.csv"),
+  list(name="Rafael", file="data/Rafael.csv")
 )
 
-# plot hierarchical clustering
+# get clusters
 clusters <- getCardSortingClusters(datasets)
+# plot hierarchical clusters
+getClustersPlot(clusters$hclust, k=2)
 
-median_clusters = 2
-hcdata <- dendro_data_k(clusters$hclust, median_clusters)
-plot_ggdendro(
-  hcdata,
-  direction   = "lr", # horizontal
-  #direction   = "tb", # vertical
-  expand.y    = 0.5,
-  label.size  = 4.5,
-  branch.size = 1
-) +
-  theme_light() +
-  ylab("Distância (quanto menor, mais próximo)") +
-  xlab("") +
-  theme(panel.border = element_blank())+
-  scale_fill_continuous(guide = guide_legend(title = NULL))
-
-
-# plot table
+# plot clusters table
 table <- getClusterTable(hclust=clusters$hclust, k=median_clusters, index_df=clusters$index_df)
 View(table)
+
+# plot confidence table
+getConfPlot(clusters$conf_matrix)
+View(clusters$conf_matrix)

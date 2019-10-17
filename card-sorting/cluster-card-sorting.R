@@ -1,3 +1,7 @@
+library(ggplot2)
+library(ggdendro)
+library(corrplot)
+
 getCardSortingClusters <- function(datasets){
   
   # getting all cards from all datasets
@@ -62,12 +66,16 @@ getCardSortingClusters <- function(datasets){
   # force logical and numeric type
   base_df[,3:length(base_df)] = as.logical(base_df[,3:length(base_df)] == "TRUE")
   
+  # get "names" column, count repeated rows and table them per person
+  # each row = 1 cluster per person. counting repeated rows for "names" equals counting each person's total clusters
+  median_clusters = median(table(base_df[,1]))
+  
   # measure "distance" between variables and fill matrix
   measure_df = base_df[,3:length(base_df)]
   measure_names = colnames(measure_df)
-  dist_matrix = matrix(1, nrow = length(measure_df), ncol = length(measure_df))
-  colnames(dist_matrix) = measure_names
-  rownames(dist_matrix) = measure_names
+  conf_matrix = matrix(1, nrow = length(measure_df), ncol = length(measure_df))
+  colnames(conf_matrix) = measure_names
+  rownames(conf_matrix) = measure_names
   
   for(i in 1:length(measure_names)){
     first = measure_names[[i]]
@@ -83,23 +91,26 @@ getCardSortingClusters <- function(datasets){
         greaterCount = if(firstCount > secondCount) firstCount else secondCount
         bothCount = length(which(compare[,1] & compare[,2] == TRUE))
         
-        # calculate "distance" from co-ocurrence
-        dist = bothCount / greaterCount
-        dist = 1 - dist
-        #if(dist == 0) dist = 0.01 # if if gets to zero, apply just a non-zero value
-        
-        dist_matrix[i,j] = dist
-        dist_matrix[j,i] = dist
-        #}
+        # calculate "confidence" of this pair association
+        # it's the same as calculating confidence for A THEN B and B THEN A, and then picking the smallest value
+        conf = bothCount / greaterCount
+        conf_matrix[i,j] <- conf
+        conf_matrix[j,i] <- conf
       }
     }
   }
+  # convert confidence to "distance": the smaller, the closer
+  dist_matrix <- 1 - conf_matrix
   hclust <- hclust(as.dist(dist_matrix), method = 'average')
+
   res = list(
+    cards = cards,
     hclust = hclust,
     dist_matrix = dist_matrix,
+    conf_matrix = conf_matrix,
     base_df = base_df,
-    index_df = index_df
+    index_df = index_df,
+    median_clusters = median_clusters
   )
   return(res)
 }
@@ -133,4 +144,43 @@ getClusterTable <- function(hclust=NULL, k=2, index_df=NULL){
     cut_df[paste("Cluster ", c)] = c(cards, vector(mode="character", length =(nrow(cut_df)-length(cards)) ))
   }
   return(cut_df[,-c(1,2)])
+}
+
+getClustersPlot <- function(hclust, k=NULL){
+  hcdata <- dendro_data_k(hclust, k)
+  plot <- plot_ggdendro(
+    hcdata,
+    direction   = "lr", # horizontal
+    # direction   = "tb", # vertical
+    expand.y    = 0.5,
+    label.size  = 4.5,
+    branch.size = 1
+  ) +
+    theme_light() +
+    ylab("Distance (the smaller, the closer)") +
+    xlab("") +
+    theme(panel.border = element_blank())+
+    scale_fill_continuous(guide = guide_legend(title = NULL))
+  return(plot)
+}
+
+getConfPlot <- function(conf_matrix){
+  col <- colorRampPalette(c("blue", "white", "#27AE60"))
+  return(
+    corrplot(
+      round(conf_matrix, digits = 1), 
+      type="upper", 
+      method="color", 
+      # method="circle", 
+      addgrid.col = alpha("#000000", 0.2),
+      tl.col = "black", 
+      tl.cex=0.8, 
+      tl.srt=45, 
+      number.cex = 0.7, 
+      addCoef.col = "black",
+      col=col(20), 
+      cl.lim = c(0,1), 
+      cl.cex=0.8
+    )
+  )
 }
