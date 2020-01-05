@@ -1,0 +1,57 @@
+.google-btn {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    background: var(--color-google-btn);
+    color: var(--color-white);
+    border: 1px solid var(--color-google-btn);
+    border-radius: 4px;
+    /* overflow: hidden; */
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+}
+.google-btn:hover {
+    background-color: var(--color-google-btn-hover);
+}
+.google-btn__img {
+    padding: 3px;
+    background: var(--color-white);
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+.google-btn__text {
+    font-weight: bold;
+    padding: 0 12px;
+    font-size: 14px;
+    max-height: 38px;
+}
+
+.google-btn::-moz-focus-inner,
+.google-btn::-moz-focus-inner {
+   border: 0;
+}
+.google-btn:disabled {
+    cursor: no-drop;
+    opacity: 0.5;
+}
+
+.google-btn:before,
+.google-btn:before {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    content: "";
+    border-radius: inherit;
+    z-index: 0;
+    box-shadow: 0 0 0 0px transparent;
+    opacity: 0;
+    transition: box-shadow 250ms, opacity 250ms;
+}
+.google-btn:focus:before,
+.google-btn:focus:before {
+    opacity: 0.5;
+    box-shadow: 0 0 0 calc(var(--spacing)/1.5) var(--color-google-btn);
+}

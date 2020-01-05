@@ -1,0 +1,57 @@
+.btn-primary,
+.btn-secondary {
+    padding: calc(var(--spacing)*1.5) calc(var(--spacing)*3);
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: calc(var(--spacing)/2);
+    border: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: background 250ms;
+    box-sizing: border-box;
+    position: relative;
+}
+.btn-primary span,
+.btn-secondary span {
+    display: block;
+}
+.btn-primary::-moz-focus-inner,
+.btn-secondary::-moz-focus-inner {
+   border: 0;
+}
+.btn-primary:disabled,
+.btn-secondary:disabled {
+    cursor: no-drop;
+    opacity: 0.5;
+}
+
+.btn-primary:before,
+.btn-secondary:before {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    content: "";
+    border-radius: inherit;
+    z-index: 0;
+    box-shadow: 0 0 0 0px transparent;
+    opacity: 0;
+    transition: box-shadow 250ms, opacity 250ms;
+}
+.btn-primary:focus:before,
+.btn-secondary:focus:before {
+    opacity: 0.5;
+    box-shadow: 0 0 0 calc(var(--spacing)/2) var(--color-accent);
+}
+.btn-primary {
+    color: var(--color-white);
+    background-color: var(--color-accent);
+}
+    .btn-primary:not(:disabled):hover { background-color: var(--color-text-bg-light); }
+
+.btn-secondary {
+    color: var(--color-base);
+    background-color: var(--color-background);
+}
+    .btn-secondary:not(:disabled):hover { background-color: var(--color-foreground); }
