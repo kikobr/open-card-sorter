@@ -75,6 +75,17 @@ var texts = {
                 { class: [`btn-primary`], text: [`Fechar`], action: "close" }
             ]
         },
+        failInit: {
+            title: [`Falha ao conectar`],
+            text: [
+                `Verifique se as chaves geradas no Developers Console do Google foram geradas corretamente.`,
+                `Lembre-se de verificar se o CLIENT_ID está com a origem corretamente apontada para este domínio.`
+            ],
+            buttons: [
+                { class: [`btn-primary`], text: [`Fechar`], action: "close" },
+                { class: [`btn-secondary`], text: [`Recarregar`], action: "refresh" },
+            ]
+        },
         noKeys: {
             title: [`Falha ao conectar`],
             text: [

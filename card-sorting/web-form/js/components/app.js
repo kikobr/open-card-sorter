@@ -145,6 +145,12 @@ var app = new Vue({
                 // Handle the initial sign-in state
                 this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
             }, function(error) {
+                return this.alert = {
+                    open: true,
+                    title: this.texts.alerts.failInit.title,
+                    text: this.texts.alerts.failInit.text,
+                    buttons: this.texts.alerts.failInit.buttons
+                };
                 console.log(JSON.stringify(error, null, 2));
             });
         },
