@@ -1,14 +1,14 @@
 // Array of API discovery doc URLs for APIs used by the quickstart
 const DISCOVERY_DOCS = [
-    "https://sheets.googleapis.com/$discovery/rest?version=v4"
+    "https://sheets.googleapis.com/$discovery/rest?version=v4",
 ];
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
+const SCOPES = `https://www.googleapis.com/auth/spreadsheets`;
 
 var app = new Vue({
     el: '#app',
-    components: ["app-intro", "app-card", "app-ending"],
+    components: ["app-intro", "app-card", "app-ending", "app-modal"],
     props: {
         texts: {
             type: Object,
@@ -16,6 +16,14 @@ var app = new Vue({
         }
     },
     data: {
+        alert: {
+            open: false,
+            title: [``],
+            text: [ `` ],
+            buttons: [
+                { class: [`btn-primary`], text: [``], action: "close" }
+            ]
+        },
         gapiConnected: false,
         authenticated: false,
         queueStart: false,
@@ -38,10 +46,6 @@ var app = new Vue({
         this.CLIENT_ID = this.getParameterByName("CLIENT_ID");
         this.API_KEY = this.getParameterByName("API_KEY");
         this.SPREADHSEET_ID = this.getParameterByName("SPREADHSEET_ID");
-
-        // this.CLIENT_ID = '960421396712-pkvai2kt20mtlfmeot5505glp5hp81pf.apps.googleusercontent.com';
-        // this.API_KEY = 'AIzaSyBBIDXg1as2Z3iwqD_O9gCFAaFkMWp3Jgw';
-        // this.SPREADHSEET_ID = '1UHWW1V9tvfjfIAD3s0nOY0p8UERse2VfRoH04JN-SRQ';
     },
     beforeMount: function() {
         document.title = this.texts.appTitle.join(" ");
@@ -102,6 +106,10 @@ var app = new Vue({
         },
     },
     methods: {
+        closeAlert: function(){ this.alert.open = false },
+        refresh: function(){
+            window.location.reload();
+        },
         authenticate: function() {
             // manual connection
             if (this.authenticated) this.started = true;
@@ -117,6 +125,14 @@ var app = new Vue({
             gapi.load('client:auth2', this.initGapiClient);
         },
         initGapiClient: function() {
+            if(!this.API_KEY || !this.CLIENT_ID) {
+                return this.alert = {
+                    open: true,
+                    title: this.texts.alerts.noKeys.title,
+                    text: this.texts.alerts.noKeys.text,
+                    buttons: this.texts.alerts.noKeys.buttons
+                };
+            }
             gapi.client.init({
                 apiKey: this.API_KEY,
                 clientId: this.CLIENT_ID,
@@ -132,11 +148,10 @@ var app = new Vue({
                 console.log(JSON.stringify(error, null, 2));
             });
         },
-        updateSigninStatus: function(isSignedIn) {
+        updateSigninStatus: async function(isSignedIn) {
             if (isSignedIn) {
-
                 // get list of cards
-                this.getSpreadsheetCards();
+                await this.getSpreadsheetCards();
 
                 let userName = this.texts.anonymousLabel.join(" ");
                 try {
@@ -173,9 +188,15 @@ var app = new Vue({
                         id: i+1
                     };
                 });
-                this.original = this.original.concat(original);
+                this.original = [this.original[0]].concat(original);
                 this.originalUntouched = this.original.filter((o) => o.name).slice(0);
             }, (reason) => {
+                this.alert = {
+                    open: true,
+                    title: this.texts.alerts.noSheet.title,
+                    text: this.texts.alerts.noSheet.text,
+                    buttons: this.texts.alerts.noSheet.buttons
+                };
                 console.error('error: ' + reason.result.error.message);
             });
         },
@@ -202,6 +223,26 @@ var app = new Vue({
         },
         getStepsByIndexes: function(arr) {
             return arr.map((i) => this.texts.steps[i]);
+        },
+        alertSteps: function(){
+            let html = `<div class="app-step">`;
+            html += this.texts.steps.map((step) => {
+                return step.title.map((t) => `<h2 class="app-step__title">${this.userNameText(t)}</h2>`) +
+                    `<div class="app-step__text">` +
+                        step.text.map((t) => `<p>${this.userNameText(t)}</p>`).join("") +
+                    `</div>`
+            }).join("");
+            html += `</div>`;
+
+            this.alert = {
+                open: true,
+                title: this.texts.alerts.steps.title,
+                textHtml: html,
+                buttons: this.texts.alerts.steps.buttons,
+                style: {
+                    maxWidth: "800px"
+                },
+            };
         },
         userNameText: function(text) {
             let name = this.authenticated && this.authenticated.userName ? this.authenticated.userName.split(" ")[0] : "";
@@ -303,6 +344,12 @@ var app = new Vue({
                 console.log(response.result);
                 this.completed = true;
             }, (reason) => {
+                this.alert = {
+                    open: true,
+                    title: this.texts.alerts.saveFail.title,
+                    text: this.texts.alerts.saveFail.text,
+                    buttons: this.texts.alerts.saveFail.buttons
+                };
                 console.error('error: ' + reason.result.error.message);
             });
 

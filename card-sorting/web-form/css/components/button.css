@@ -51,7 +51,7 @@
     .btn-primary:not(:disabled):hover { background-color: var(--color-text-bg-light); }
 
 .btn-secondary {
-    color: var(--color-base);
+    color: var(--color-accent);
     background-color: var(--color-background);
 }
     .btn-secondary:not(:disabled):hover { background-color: var(--color-foreground); }

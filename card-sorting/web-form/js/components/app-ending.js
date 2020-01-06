@@ -12,7 +12,7 @@ Vue.component('app-ending', {
         }
     },
     methods: {
-        reset: function(){
+        refresh: function(){
             window.location.reload();
         },
         userNameText: function(text){
@@ -30,7 +30,7 @@ Vue.component('app-ending', {
                 <p v-for="t in texts.endingText" v-html="t"></p>
             </header>
             <footer class="intro__footer">
-                <button class="btn-secondary" @click="reset">
+                <button class="btn-secondary" @click="refresh">
                 <span v-for="t in texts.resetButton" v-html="t"></span>
                 </button>
             <footer>

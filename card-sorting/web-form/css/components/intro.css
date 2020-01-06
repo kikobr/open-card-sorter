@@ -23,7 +23,7 @@
     font-style: normal;
     font-weight: bold;
     font-size: 64px;
-    color: var(--color-base);
+    color: var(--color-accent);
     margin-top: 0;
     margin-bottom: calc(var(--spacing)*8);
 }

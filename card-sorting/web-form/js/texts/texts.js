@@ -8,6 +8,7 @@ var texts = {
     introPreAuth: [
         `Para iniciar, é preciso se autenticar com uma conta Google.`,
     ],
+    // googleConnectPlaceholder: [`Aguarde...`],
     googleAuthConnect: [ `Conectar com Google` ],
     googleAuthConnectAs: [ `Continuar como` ],
     googleAuthDisconnect: [ `Desconectar` ],
@@ -66,4 +67,44 @@ var texts = {
     resetButton: [ `Reiniciar` ],
 
     anonymousLabel: [ `Anônimo` ],
+
+    alerts: {
+        steps: {
+            title: [`Instruções`],
+            buttons: [
+                { class: [`btn-primary`], text: [`Fechar`], action: "close" }
+            ]
+        },
+        noKeys: {
+            title: [`Falha ao conectar`],
+            text: [
+                `A chave de acesso (API_KEY) ou do cliente (CLIENT_ID) não foram inseridas corretamente.`,
+                'Verifique se você gerou o link corretamente e reinicie a página.'
+            ],
+            buttons: [
+                { class: [`btn-primary`], text: [`Fechar`], action: "close" }
+            ]
+        },
+        noSheet: {
+            title: [`Falha ao conectar`],
+            text: [
+                `Não foi possível acessar os dados para iniciar este card sorting. Verifique o link ou tente novamente atualizando a página.`,
+                `Se o problema persistir, tente desconectar e conectar novamente seu acesso via Google.`
+            ],
+            buttons: [
+                { class: [`btn-primary`], text: [`Tentar novamente`], action: "refresh" }
+            ]
+        },
+        saveFail: {
+            title: [`Falha ao salvar atividade`],
+            text: [
+                `Não possível acessar o servidor.`,
+                `Tente novamente atualizando a página, desconectando e conectando novamente via Google.`
+            ],
+            buttons: [
+                { class: [`btn-primary`], text: [`Fechar`], action: "close" },
+                { class: [`btn-secondary`], text: [`Reiniciar`], action: "refresh" },
+            ]
+        },
+    },
 }

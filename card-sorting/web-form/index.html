@@ -7,14 +7,15 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
-    <div class="app" id="app">
+    <div class="app" id="app" :tabindex="alert.open ? -1 : false">
+        <app-modal v-if="alert.open" :alert="alert" @close="closeAlert"></app-modal>
         <app-intro v-if="!started" :gapi-connected="gapiConnected" :authenticated="authenticated" @authenticate="authenticate"  @disconnect="disconnect"></app-intro>
         <app-ending v-else-if="completed" :authenticated="authenticated"></app-ending>
         <template v-else>
             <header class="app-header">
                 <h1 class="app-header__logo" v-for="t in texts.appTitle" v-html="t"></h1>
                 <aside class="app-header__actions">
-                    <button class="btn-secondary">
+                    <button class="btn-secondary" @click="alertSteps">
                         <span v-for="t in texts.infoButton" v-html="t"></span>
                     </button>
                     <button class="btn-primary" :disabled="!finishedSteps" @click="finish">
@@ -79,6 +80,7 @@
     <script type="text/javascript" src="js/components/app-intro.js"></script>
     <script type="text/javascript" src="js/components/app-ending.js"></script>
     <script type="text/javascript" src="js/components/app-card.js"></script>
+    <script type="text/javascript" src="js/components/app-modal.js"></script>
     <script type="text/javascript" src="js/components/app.js"></script>
     <script src="https://apis.google.com/js/api.js" onload="this.onload=function(){}; app.loadGapi()" onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
