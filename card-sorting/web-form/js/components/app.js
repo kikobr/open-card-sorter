@@ -209,7 +209,7 @@ var app = new Vue({
                 }
                 this.loading = false;
             };
-            req.send(`type=write&values=${JSON.stringify(items)}`);
+            req.send(`type=write&values=${encodeURIComponent(JSON.stringify(items))}`);
         },
         shuffleArray: function (array) {
             var currentIndex = array.length, temporaryValue, randomIndex;
