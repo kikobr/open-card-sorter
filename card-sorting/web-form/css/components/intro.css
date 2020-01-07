@@ -37,6 +37,18 @@
     max-width: 900px;
 }
 .intro__header p:last-child { margin-bottom: 0; }
+
+.intro__form {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 100%;
+}
+.intro__form > *:not(:last-child) {
+    margin-right: calc(var(--spacing)*1);
+    flex-grow: 1;
+}
+
 .intro__footer {
     margin-top: calc(var(--spacing) * 7);
 }
@@ -48,7 +60,7 @@
 }
 .intro [class*=btn]{
     vertical-align: middle;
-    margin-right: var(--spacing);
+    /* margin-right: var(--spacing); */
 }
 @media (max-width: 768px) {
     .intro {

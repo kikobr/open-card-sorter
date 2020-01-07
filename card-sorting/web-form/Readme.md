@@ -1,5 +1,6 @@
 # TODO
-- Evaluate permissions (User Apps Scripts?)
+- Additional info to cards
+- Customize onboarding
 - Reorder groups
 - Improve responsive
 - Better horizontal scroll

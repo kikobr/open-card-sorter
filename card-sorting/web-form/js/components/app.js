@@ -24,14 +24,14 @@ var app = new Vue({
                 { class: [`btn-primary`], text: [``], action: "close" }
             ]
         },
-        gapiConnected: false,
-        authenticated: false,
+        loading: false,
+        authenticated: {
+            userName: null,
+        },
         queueStart: false,
         started: false,
         completed: false,
-        CLIENT_ID: null,
-        API_KEY: null,
-        SPREADHSEET_ID: null,
+        SCRIPT_URL: null,
         original: [
             {
                 title: "Deck"
@@ -43,9 +43,11 @@ var app = new Vue({
         animateStep: true,
     },
     created: function(){
-        this.CLIENT_ID = this.getParameterByName("CLIENT_ID");
-        this.API_KEY = this.getParameterByName("API_KEY");
-        this.SPREADHSEET_ID = this.getParameterByName("SPREADHSEET_ID");
+        // this.SCRIPT_URL = `https://script.google.com/macros/s/${ this.getParameterByName("gs") }/dev`;
+        this.SCRIPT_URL = `https://script.google.com/macros/s/${ this.getParameterByName("gs") }/exec`;
+
+        this.authenticated.userName = window.localStorage.getItem("userName") || this.authenticated.userName;
+        // this.getSpreadsheetCards();
     },
     beforeMount: function() {
         document.title = this.texts.appTitle.join(" ");
@@ -110,101 +112,103 @@ var app = new Vue({
         refresh: function(){
             window.location.reload();
         },
-        authenticate: function() {
-            // manual connection
-            if (this.authenticated) this.started = true;
-            else {
-                this.queueStart = true;
-                gapi.auth2.getAuthInstance().signIn();
-            }
+        connect: function() {
+            window.localStorage.setItem("userName", this.authenticated.userName);
+            this.getSpreadsheetCards();
         },
-        disconnect: function() {
-            gapi.auth2.getAuthInstance().signOut();
-        },
-        loadGapi: function() {
-            gapi.load('client:auth2', this.initGapiClient);
-        },
-        initGapiClient: function() {
-            if(!this.API_KEY || !this.CLIENT_ID) {
+        getSpreadsheetCards: function(){
+            if(!this.getParameterByName("gs")){
                 return this.alert = {
                     open: true,
                     title: this.texts.alerts.noKeys.title,
                     text: this.texts.alerts.noKeys.text,
-                    buttons: this.texts.alerts.noKeys.buttons
+                    buttons: this.texts.alerts.noKeys.buttons,
                 };
-            }
-            gapi.client.init({
-                apiKey: this.API_KEY,
-                clientId: this.CLIENT_ID,
-                discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES
-            }).then(() => {
-                this.gapiConnected = true;
-                // Listen for sign-in state changes
-                gapi.auth2.getAuthInstance().isSignedIn.listen(this.updateSigninStatus);
-                // Handle the initial sign-in state
-                this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-            }, function(error) {
-                console.log(JSON.stringify(error, null, 2));
-                return this.alert = {
-                    open: true,
-                    title: this.texts.alerts.failInit.title,
-                    text: this.texts.alerts.failInit.text,
-                    buttons: this.texts.alerts.failInit.buttons
-                };
-            });
-        },
-        updateSigninStatus: async function(isSignedIn) {
-            if (isSignedIn) {
-                // get list of cards
-                await this.getSpreadsheetCards();
-
-                let userName = this.texts.anonymousLabel.join(" ");
-                try {
-                    userName = gapi.auth2.getAuthInstance().currentUser.Ab.w3.ig;
-                } catch (err) {
-                    console.log(err);
-                }
-                this.authenticated = {
-                    userName: userName
-                };
-                // redirect when connecting the first time
-                if (this.queueStart) {
-                    this.started = true;
-                    this.queueStart = false;
-                }
-            } else {
-                this.authenticated = false;
-            }
-        },
-        getSpreadsheetCards: async function(){
-            var params = {
-                // The ID of the spreadsheet to update.
-                spreadsheetId: this.SPREADHSEET_ID,
-                range: `1. Setup!A2:A`,
-                valueRenderOption: 'FORMATTED_VALUE',
-                dateTimeRenderOption: 'FORMATTED_STRING',
             };
-            var request = gapi.client.sheets.spreadsheets.values.get(params);
-            return request.then((response) => {
-                // shuffle cards so we avoid bias due to writing the list spontaneously
-                let original = this.shuffleArray(response.result.values).map((cell, i) => {
-                    return {
-                        name: cell[0],
-                        id: i+1
-                    };
+
+            this.loading = true;
+
+            var req = new XMLHttpRequest();
+            req.open("GET", `${this.SCRIPT_URL}?type=getCards`, true); // whether to make async call
+            req.responseType = "json";
+            req.onreadystatechange = (evt) => {
+                if (req.readyState === 4) {
+                    if (req.status === 200) {
+                        // SUCCESS
+                        var cards = req.response.status == "success" ? req.response.result : [];
+                        console.log("Cards loaded: ", req.response);
+
+                        // shuffle cards so we avoid bias due to writing the list spontaneously
+                        let original = this.shuffleArray(cards).map((cell, i) => {
+                            return {
+                                name: cell,
+                                id: i+1
+                            };
+                        });
+                        this.original = [this.original[0]].concat(original);
+                        this.originalUntouched = this.original.filter((o) => o.name).slice(0);
+
+                        let userName = this.texts.anonymousLabel.join(" ");
+
+                        // redirect when loading the first time
+                        this.started = true;
+
+                        // console.log(req.responseText)
+                    } else {
+                        // ERROR
+                        console.log(JSON.stringify(req, null, 2));
+                        this.alert = {
+                            open: true,
+                            title: this.texts.alerts.noSheet.title,
+                            text: this.texts.alerts.noSheet.text,
+                            buttons: this.texts.alerts.noSheet.buttons
+                        };
+                    }
+                }
+                this.loading = false;
+            };
+            req.send();
+        },
+        saveToSheets: function() {
+            this.loading = true;
+            let id = (Date.parse(new Date).toString());
+            let date = `${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}`;
+
+            let items = this.lists.map((l, i)=>{
+                return l.map((item, index) => {
+                    if(index == 0) return item.title;
+                    else return item.name;
                 });
-                this.original = [this.original[0]].concat(original);
-                this.originalUntouched = this.original.filter((o) => o.name).slice(0);
-            }, (reason) => {
-                this.alert = {
-                    open: true,
-                    title: this.texts.alerts.noSheet.title,
-                    text: this.texts.alerts.noSheet.text,
-                    buttons: this.texts.alerts.noSheet.buttons
-                };
-                console.error('error: ' + reason.result.error.message);
             });
+            items.forEach((item) => {
+                item.splice(0, 0, id );
+                item.splice(1, 0, date );
+                item.splice(2, 0, this.authenticated.userName);
+            });
+
+            var req = new XMLHttpRequest();
+            req.open("GET", `${this.SCRIPT_URL}?type=write&values=${JSON.stringify(items)}`, true); // whether to make async call
+            req.responseType = "json";
+            req.onreadystatechange = (evt) => {
+                if (req.readyState === 4) {
+                    if (req.status === 200) {
+                        // SUCCESS
+                        console.log("Saved: ", req.response);
+                        this.completed = true;
+                    } else {
+                        // ERROR
+                        console.log(JSON.stringify(req.response, null, 2));
+                        this.alert = {
+                            open: true,
+                            title: this.texts.alerts.saveFail.title,
+                            text: this.texts.alerts.saveFail.text,
+                            buttons: this.texts.alerts.saveFail.buttons
+                        };
+                    }
+                }
+                this.loading = false;
+            };
+            req.send();
         },
         shuffleArray: function (array) {
             var currentIndex = array.length, temporaryValue, randomIndex;
@@ -310,55 +314,6 @@ var app = new Vue({
         },
         finish: function() {
             this.saveToSheets();
-            // this.completed = true;
-        },
-        saveToSheets: function() {
-
-            let id = (Date.parse(new Date).toString());
-            let date = `${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}`;
-
-            let items = this.lists.map((l, i)=>{
-                return l.map((item, index) => {
-                    if(index == 0) return item.title;
-                    else return item.name;
-                });
-            });
-            items.forEach((item) => {
-                item.splice(0, 0, id );
-                item.splice(1, 0, date );
-                item.splice(2, 0, this.authenticated.userName);
-            });
-
-            var params = {
-                // The ID of the spreadsheet to update.
-                spreadsheetId: this.SPREADHSEET_ID, // TODO: Update placeholder value.
-                // The A1 notation of the values to update.
-                range: `Forms!A1:A`,
-                valueInputOption: 'RAW',
-                insertDataOption: 'INSERT_ROWS',
-            };
-
-            var valueRangeBody = {
-                "majorDimension": 'ROWS',
-                "values": items,
-            };
-
-            var request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
-
-            request.then((response) =>{
-                // TODO: Change code below to process the `response` object:
-                console.log(response.result);
-                this.completed = true;
-            }, (reason) => {
-                this.alert = {
-                    open: true,
-                    title: this.texts.alerts.saveFail.title,
-                    text: this.texts.alerts.saveFail.text,
-                    buttons: this.texts.alerts.saveFail.buttons
-                };
-                console.error('error: ' + reason.result.error.message);
-            });
-
         },
         getParameterByName: function (name, url) {
             if (!url) url = window.location.href;

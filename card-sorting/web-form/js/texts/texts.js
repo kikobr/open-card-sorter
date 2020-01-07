@@ -6,8 +6,10 @@ var texts = {
         `Ela dura em torno de <b>10 a 15 minutos</b> para ser completada. É rapidinho e vai nos ajudar muito!`,
     ],
     introPreAuth: [
-        `Para iniciar, é preciso se autenticar com uma conta Google.`,
+        `Para começar, como posso te chamar?`,
     ],
+    start: [`Iniciar`],
+    nameInputPlaceholder: [`Digite seu nome`],
     // googleConnectPlaceholder: [`Aguarde...`],
     googleAuthConnect: [ `Conectar com Google` ],
     googleAuthConnectAs: [ `Continuar como` ],
@@ -75,21 +77,9 @@ var texts = {
                 { class: [`btn-primary`], text: [`Fechar`], action: "close" }
             ]
         },
-        failInit: {
-            title: [`Falha ao conectar`],
-            text: [
-                `Verifique se as chaves geradas no Developers Console do Google foram geradas corretamente.`,
-                `Lembre-se de verificar se o CLIENT_ID está com a origem corretamente apontada para este domínio.`
-            ],
-            buttons: [
-                { class: [`btn-primary`], text: [`Fechar`], action: "close" },
-                { class: [`btn-secondary`], text: [`Recarregar`], action: "refresh" },
-            ]
-        },
         noKeys: {
-            title: [`Falha ao conectar`],
+            title: [`Código App Script não encontrado`],
             text: [
-                `A chave de acesso (API_KEY) ou do cliente (CLIENT_ID) não foram inseridas corretamente.`,
                 'Verifique se você gerou o link corretamente e reinicie a página.'
             ],
             buttons: [

@@ -3,11 +3,10 @@ Vue.component('app-intro', {
         return {}
     },
     props: {
-        authenticated: {
+        loading: {
             default: false,
         },
-        gapiConnected: {
-            type: Boolean,
+        authenticated: {
             default: false,
         },
         texts: {
@@ -17,7 +16,7 @@ Vue.component('app-intro', {
     },
     methods: {
         userNameText: function(text){
-            let name = this.authenticated ? this.authenticated.userName.split(" ")[0] : "";
+            let name = this.authenticated && this.authenticated.userName ? this.authenticated.userName.split(" ")[0] : "";
             return text
                 .replace("%userNameComma", `${name ? ", " : ""}${name}`)
                 .replace("%userName", name);
@@ -31,15 +30,15 @@ Vue.component('app-intro', {
             </header>
             <footer class="intro__footer">
                 <p v-for="t in texts.introPreAuth" v-html="t"></p>
-                <!-- Google Button -->
-                <button class="google-btn" @click="$emit('authenticate')" :disabled="!gapiConnected">
-                    <img class="google-btn__img" src="img/google-btn-logo.svg" alt="Google Logo" />
-                    <span v-if="authenticated" class="google-btn__text" v-for="t in texts.googleAuthConnectAs" v-html="t + ' ' + authenticated.userName"></span>
-                    <span v-else class="google-btn__text" v-for="t in texts.googleAuthConnect" v-html="t"></span>
-                </button>
-                <button v-if="authenticated" class="btn-secondary" @click="$emit('disconnect')">
-                    <span v-for="t in texts.googleAuthDisconnect" v-html="t"></span>
-                </button>
+                <form class="intro__form" name="authentication" @submit.prevent="$emit('connect')">
+                    <div class="input">
+                        <input :placeholder="texts.nameInputPlaceholder" v-model="authenticated.userName" required />
+                        <span class="focus"></span>
+                    </div>
+                    <button :disabled="!authenticated.userName || loading" class="btn-primary" type="submit">
+                        <span v-for="t in texts.start" v-html="t"></span>
+                    </button>
+                </form>
             </footer>
         </main>
     `,
