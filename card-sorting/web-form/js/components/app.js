@@ -185,10 +185,11 @@ var app = new Vue({
                 item.splice(1, 0, date );
                 item.splice(2, 0, this.authenticated.userName);
             });
-
+            
             var req = new XMLHttpRequest();
-            req.open("GET", `${this.SCRIPT_URL}?type=write&values=${JSON.stringify(items)}`, true); // whether to make async call
+            req.open("POST", `${this.SCRIPT_URL}`, true); // whether to make async call
             req.responseType = "json";
+            req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             req.onreadystatechange = (evt) => {
                 if (req.readyState === 4) {
                     if (req.status === 200) {
@@ -208,7 +209,7 @@ var app = new Vue({
                 }
                 this.loading = false;
             };
-            req.send();
+            req.send(`type=write&values=${JSON.stringify(items)}`);
         },
         shuffleArray: function (array) {
             var currentIndex = array.length, temporaryValue, randomIndex;
