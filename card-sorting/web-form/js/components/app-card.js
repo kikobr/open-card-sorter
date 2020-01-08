@@ -3,7 +3,14 @@ Vue.component('app-card', {
         return {}
     },
     props: {
-        name: String,
+        card: {
+            type: Object,
+            default: {
+                id: null,
+                name: null,
+                info: null,
+            }
+        },
         texts: {
             type: Object,
             default: window.texts
@@ -11,7 +18,10 @@ Vue.component('app-card', {
     },
     template: `
         <article class="app-card">
-            {{name}}
+            <span class="app-card__name">{{card.name}}</span>
+            <span class="app-card__info" v-if="card.info" :data-info="card.info">
+                <img src="img/info.svg" alt="Informação" />
+            </span>
         </article>
     `,
 });

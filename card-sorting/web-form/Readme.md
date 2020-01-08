@@ -1,5 +1,4 @@
 # TODO
-- Additional info to cards
 - Customize onboarding
 - Reorder groups
 - Improve responsive

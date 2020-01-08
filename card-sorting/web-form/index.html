@@ -7,7 +7,7 @@
     </head>
     <body>
         <div class="app" id="app" :tabindex="alert.open ? -1 : false">
-            <app-modal v-if="alert.open" :alert="alert" @close="closeAlert"></app-modal>
+            <app-modal v-if="alert.open" :alert="alert" @close="closeAlert" @refresh="refresh"></app-modal>
             <app-intro v-if="!started" :loading="loading" :authenticated="authenticated" @connect="connect"></app-intro>
             <app-ending v-else-if="completed" :authenticated="authenticated"></app-ending>
             <template v-else>
@@ -17,7 +17,7 @@
                         <button class="btn-secondary" @click="alertSteps">
                             <span v-for="t in texts.infoButton" v-html="t"></span>
                         </button>
-                        <button :disabled="loading" class="btn-primary" :disabled="!finishedSteps" @click="finish">
+                        <button :disabled="loading || !finishedSteps" class="btn-primary" @click="finish">
                             <span v-for="t in texts.finishButton" v-html="t"></span>
                         </button>
                     </aside>
@@ -28,7 +28,7 @@
                         <p class="app-sidebar__subtitle" v-html="groupedCardsCounter"></p>
                         <draggable
                         class="card-group__list" :list="original" group="cards" :move="onMove">
-                            <app-card class="list-group-item" v-for="(element, index) in original" :key="element.id" :name="element.name"></app-card>
+                            <app-card class="list-group-item" v-for="(element, index) in original" :key="element.id" :card="element"></app-card>
                         </draggable>
                     </aside>
                     <main class="app-main">
@@ -52,7 +52,7 @@
                                             <p v-for="t in texts.cardTopDivider" v-html="t"></p>
                                         </header>
                                         <draggable class="card-group__list" :list="list" group="cards" :data-index="index" @change="onChange($event, list, index)" :move="onMove">
-                                            <app-card class="list-group-item" v-for="(element, index) in list" :key="element.id" :name="element.name"></app-card>
+                                            <app-card class="list-group-item" v-for="(element, index) in list" :key="element.id" :card="element"></app-card>
                                         </draggable>
                                         <header class="card-group__divider">
                                             <p v-for="t in texts.cardBottomDivider" v-html="t"></p>

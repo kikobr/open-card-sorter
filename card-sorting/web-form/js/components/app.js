@@ -141,8 +141,9 @@ var app = new Vue({
                         // shuffle cards so we avoid bias due to writing the list spontaneously
                         let original = this.shuffleArray(cards).map((cell, i) => {
                             return {
-                                name: cell,
-                                id: i+1
+                                id: i+1,
+                                name: cell[0],
+                                info: cell[1],
                             };
                         });
                         this.original = [this.original[0]].concat(original);
@@ -185,7 +186,7 @@ var app = new Vue({
                 item.splice(1, 0, date );
                 item.splice(2, 0, this.authenticated.userName);
             });
-            
+
             var req = new XMLHttpRequest();
             req.open("POST", `${this.SCRIPT_URL}`, true); // whether to make async call
             req.responseType = "json";

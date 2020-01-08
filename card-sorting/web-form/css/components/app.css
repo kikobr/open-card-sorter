@@ -26,7 +26,7 @@ p { margin-bottom: calc(var(--spacing)*2); }
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0 calc(var(--spacing)*3);
+    padding: calc(var(--spacing)*0.5) calc(var(--spacing)*3);
 }
     .app-header__logo {
         font-weight: bold;

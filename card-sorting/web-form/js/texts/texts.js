@@ -90,17 +90,17 @@ var texts = {
             title: [`Falha ao conectar`],
             text: [
                 `Não foi possível acessar os dados para iniciar este card sorting. Verifique o link ou tente novamente atualizando a página.`,
-                `Se o problema persistir, tente desconectar e conectar novamente seu acesso via Google.`
             ],
             buttons: [
-                { class: [`btn-primary`], text: [`Tentar novamente`], action: "refresh" }
+                { class: [`btn-primary`], text: [`Tentar novamente`], action: "refresh" },
+                { class: [`btn-secondary`], text: [`Fechar`], action: "close" },
             ]
         },
         saveFail: {
             title: [`Falha ao salvar atividade`],
             text: [
-                `Não possível acessar o servidor.`,
-                `Tente novamente atualizando a página, desconectando e conectando novamente via Google.`
+                `Não foi possível acessar o servidor.`,
+                `Aguarde um pouco e tente novamente atualizando a página.`
             ],
             buttons: [
                 { class: [`btn-primary`], text: [`Fechar`], action: "close" },

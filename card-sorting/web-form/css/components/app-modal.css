@@ -12,6 +12,9 @@
     padding: calc(var(--spacing)*2);
     box-sizing: border-box;
 }
+    .app-modal [class*=btn]:not(:last-child) {
+        margin-right: calc(var(--spacing)*2);
+    }
 .app-modal:before {
     position: fixed;
     content: "";

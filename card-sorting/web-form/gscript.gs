@@ -1,5 +1,5 @@
-var readSheetName = "1. Setup";
-var cardsRange = "A2:A";
+var readSheetName = "Setup";
+var cardsRange = "A4:B";
 var writeSheetName = "Forms";
 
 function doPost(e){
@@ -18,9 +18,10 @@ function doPost(e){
 
 function doGet(e) {
   var res = {};
-  if(e.parameters.type == "getCards"){
+  if(!e || e.parameters.type == "getCards"){
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(readSheetName);
-    var cards = sheet.getRange(cardsRange).getValues().filter(String).map(function(row){ return row[0]; });
+    var cards = sheet.getRange(cardsRange).getValues().filter(function(v){ return v[0].length; });
+
     res.status = "success";
     res.result = cards;
   }
