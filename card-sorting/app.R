@@ -26,7 +26,7 @@ ui <- fluidPage(
     titlePanel("Card Sorting Analysis"),
     br(),
 
-    # Sidebar with a slider input for number of bins 
+    # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
             width=3,
@@ -122,5 +122,5 @@ server <- function(input, output) {
     })
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+# Run the application
+runApp(shinyApp(ui = ui, server = server), host = "0.0.0.0")
