@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+    </head>
+    <body>
+        <div class="app" id="app" :tabindex="alert.open ? -1 : false">
+            <app-modal v-if="alert.open" :alert="alert" @close="closeAlert" @refresh="refresh"></app-modal>
+            <app-intro v-if="!started" :loading="loading" :authenticated="authenticated" @connect="connect"></app-intro>
+            <app-ending v-else-if="completed" :authenticated="authenticated"></app-ending>
+            <template v-else>
+                <header class="app-header">
+                    <h1 class="app-header__logo" v-for="t in texts.appTitle" v-html="t"></h1>
+                    <aside class="app-header__actions">
+                        <button class="btn-secondary" @click="alertSteps">
+                            <span v-for="t in texts.infoButton" v-html="t"></span>
+                        </button>
+                        <button :disabled="loading || !finishedSteps" class="btn-primary" @click="finish">
+                            <span v-for="t in texts.finishButton" v-html="t"></span>
+                        </button>
+                    </aside>
+                </header>
+                <section class="app-body">
+                    <aside class="app-sidebar">
+                        <h2 class="app-sidebar__title" v-for="t in texts.sidebarTitle" v-html="t"></h2>
+                        <p class="app-sidebar__subtitle" v-html="groupedCardsCounter"></p>
+                        <draggable
+                        class="card-group__list" :list="original" group="cards" :move="onMove">
+                            <app-card class="list-group-item" v-for="(element, index) in original" :key="element.id" :card="element"></app-card>
+                        </draggable>
+                    </aside>
+                    <main class="app-main">
+
+                        <header class="app-stepper">
+                            <article :class="{'app-step': true, 'animate': animateStep}" @animationend="animateStep = false">
+                                <template v-for="step in activeSteps">
+                                    <h2 class="app-step__title" v-for="t in step.title" v-html="t"></h2>
+                                    <div class="app-step__text">
+                                        <p v-for="t in step.text" v-html="userNameText(t)"></p>
+                                    </div>
+                                </template>
+                            </article>
+                        </header>
+                        <section class="app-groups">
+                                <div v-for="(list, index) in listsWithGaps" :class="{ 'card-group col-group': true, 'col-ghost': list.length == 0 }">
+                                    <div class="col-ghost__info" v-if="!list.length" v-for="t in texts.newCardGroup" v-html="t"></div>
+                                    <input v-else class="card-group__title" type="text" name="" v-model="list[0].title" :placeholder="texts.cardGroupTitlePlaceholder[0]">
+                                    <div class="">
+                                        <header class="card-group__divider">
+                                            <p v-for="t in texts.cardTopDivider" v-html="t"></p>
+                                        </header>
+                                        <draggable class="card-group__list" :list="list" group="cards" :data-index="index" @change="onChange($event, list, index)" :move="onMove">
+                                            <app-card class="list-group-item" v-for="(element, index) in list" :key="element.id" :card="element"></app-card>
+                                        </draggable>
+                                        <header class="card-group__divider">
+                                            <p v-for="t in texts.cardBottomDivider" v-html="t"></p>
+                                        </header>
+                                    </div>
+                                    <button @click="deleteGroup(list, index)" class="card-group__close">
+                                        <img src="img/close-btn.svg" alt="Delete group" />
+                                    </button>
+                                </div>
+                        </section>
+                    </main>
+                </section>
+            </template>
+        </div>
+
+
+        <script type="text/javascript" src="js/vue.js"></script>
+        <script type="text/javascript" src="js/Sortable.min.js"></script>
+        <script type="text/javascript" src="js/vuedraggable.umd.min.js"></script>
+
+        <!-- <script type="text/javascript" src="js/sheets.js"></script> -->
+
+        <script type="text/javascript" src="js/texts/texts.js"></script>
+        <script type="text/javascript" src="js/components/app-intro.js"></script>
+        <script type="text/javascript" src="js/components/app-ending.js"></script>
+        <script type="text/javascript" src="js/components/app-card.js"></script>
+        <script type="text/javascript" src="js/components/app-modal.js"></script>
+        <script type="text/javascript" src="js/components/app.js"></script>
+        <!-- <script src="https://apis.google.com/js/api.js" onload="this.onload=function(){}; app.loadGapi()" onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script> -->
+    </body>
+
+</html>

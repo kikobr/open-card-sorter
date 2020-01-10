@@ -1,0 +1,14 @@
+:root {
+    --color-accent: #141414;
+    --color-base: #141414; /* text base */
+    --color-text-bg-light: #4F4F4F;
+    --color-text-bg-dark: #BDBDBD;
+    --color-foreground: #E0E0E0;
+    --color-background: #F2F2F2;
+    /* --color-dark-background: #141414; */
+    --color-white: #FFFFFF;
+    --color-google-btn: #4285F4;
+    --color-google-btn-hover: #3573DB;
+    --spacing: 8px;
+    --card-width: 180px;
+}

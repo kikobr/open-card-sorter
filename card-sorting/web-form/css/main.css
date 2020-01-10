@@ -1,0 +1,8 @@
+@import "fonts/inter.css";
+@import "variables.css";
+@import "components/button.css";
+@import "components/app.css";
+@import "components/app-card.css";
+@import "components/app-modal.css";
+@import "components/intro.css";
+@import "components/google-btn.css";
