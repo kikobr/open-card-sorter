@@ -1,0 +1,219 @@
+/************************
+* CARD GROUPS
+************************/
+.card-group {
+    display: inline-flex;
+    flex-direction: column;
+    height: auto;
+    border: 1px solid transparent;
+    /* overflow: hidden; */
+    background: var(--color-background);
+    border-radius: calc(var(--spacing)/2);
+    /* padding-top: calc(var(--spacing)*5); */
+    position: relative;
+    user-select: none;
+    pointer-events: none;
+}
+.card-group:hover {
+    background: var(--color-white);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    border-color: var(--color-text-bg-dark);
+}
+    .vddl-dragging .card-group__close,
+    .vddl-dragover .card-group__close { display: none; }
+    .card-group__close {
+        background: transparent;
+        border: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 250ms;
+        cursor: pointer;
+        padding: 0;
+        border-radius: 100%;
+        pointer-events: auto;
+    }
+    @media (max-width: 768px) {
+        .card-group__close { display: block; opacity: 1; }
+    }
+    .card-group__close:focus { display: block; opacity: 1; }
+    .card-group__close::-moz-focus-inner {
+        border: none;
+    }
+    .card-group__close img { float: left; }
+    .card-group:hover .card-group__close { opacity: 1; }
+    .card-group__title {
+        color: var(--color-accent);
+        border-color: transparent;
+        font-size: 16px;
+        padding: calc(var(--spacing)*1);
+        padding-left: calc(var(--spacing)*2);
+        text-align: center;
+        text-decoration: underline;
+        font-weight: 500;
+        font-family: "Inter";
+        background: transparent;
+        box-sizing: border-box;
+        width: calc(var(--card-width) + var(--spacing)*2);
+        pointer-events: auto;
+    }
+    .card-group__title::placeholder {
+      color: var(--color-text-bg-dark);
+    }
+    .card-group__hr {
+        width: 100%;
+        border: none;
+        border-top: calc(var(--spacing)/2) solid var(--color-foreground);
+        margin: 0;
+        margin-bottom: calc(var(--spacing)/-2);
+    }
+    .card-group__handle {
+        width: 12px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: grab;
+        padding: calc(var(--spacing)*0.9) 0;
+        pointer-events: auto;
+        /* pointer-events: none; */
+    }
+    .card-group__handle:active {
+        cursor: grabbing;
+    }
+    .card-group__divider {
+        background: var(--color-foreground);
+        font-size: 12px;
+        text-align: center;
+        padding: calc(var(--spacing)/4);
+        opacity: 0;
+        transition: opacity 250ms;
+        user-select: none;
+    }
+        .card-group:hover .card-group__divider,
+        .dragging .card-group__divider {
+            opacity: 1;
+        }
+    .card-group__divider p { margin: 0; }
+    /* .card-group__list {
+        min-width: var(--card-width);
+        min-height: 34.8px;
+    } */
+    .card-group__area {
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        user-select: none;
+        min-width: var(--card-width);
+        padding: calc(var(--spacing)/2) 0;
+        margin: 0 calc(var(--spacing)*1);
+        min-height: 34.8px;
+        pointer-events: auto;
+    }
+    /* sidebar has no padding on card group area */
+    .app-sidebar .card-group__area { padding: 0; margin: 0; }
+    .card-group__area > *:not(:last-child) {
+        padding-bottom: calc(var(--spacing)/2);
+    }
+    @media (max-width: 768px) {
+        .app-sidebar .card-group__area > *:not(:last-child) {
+            padding-right: calc(var(--spacing)/2);
+            padding-bottom: 0;
+        }
+    }
+
+    /* sidebar has no padding on card group area */
+    .app-sidebar .card-group__area--empty {
+        content: " ";
+        width: 100%;
+        min-height: 34.8px;
+        display: block;
+        border: 1px dashed var(--color-text-bg-light);
+    }
+
+/************************
+* DROP GROUPS
+************************/
+.drop-group {
+    height: 100%;
+    opacity: 0;
+    opacity: 1;
+    /* min-width: calc(var(--spacing)*2); */
+    /* padding: 10px; */
+    background: transparent;
+    position: relative;
+}
+/* drop-groups hidden when moving groups */
+.app-groups.vddl-dragover > .drop-group {
+    opacity: 0;
+    pointer-events: none;
+}
+.drop-group > * { height: 100%; }
+/* last drop area is always visible */
+.app-groups .drop-group:last-child {
+    opacity: 1;
+    flex-shrink: 0;
+    width: calc(var(--card-width) + var(--spacing)*4);
+    pointer-events: none;
+}
+.dragging .app-groups .drop-group:last-child {
+    pointer-events: auto;
+}
+    /* drop area message */
+    .drop-group__info {
+        background: url("../../img/add.svg") center calc(var(--spacing)*2.5) no-repeat;
+        /* background-color: var(--color-background); */
+        color: transparent;
+        text-align: center;
+        border-radius: calc(var(--spacing)/2);
+        border: 1px dashed var(--color-text-bg-dark);
+        transition: background 250ms;
+        margin: 0 calc(var(--spacing)*2);
+        padding: calc(var(--spacing)*2);
+        padding: 0;
+        height: calc(var(--spacing)*8);
+        box-sizing: border-box;
+        /* height: 100%; */
+        user-select: none;
+        transform: scale(0);
+        transform-origin: center right;
+        opacity: 0;
+        transition: padding 500ms, transform 500ms, opacity 500ms;
+    }
+    .app-groups.vddl-dragover .drop-group__info {
+        transition-delay: 1s;
+    }
+    .vddl-dragover .drop-group__info {
+        background-color: var(--color-background);
+        transform: scale(1);
+        padding: 20px;
+        opacity: 1;
+    }
+    /* show only the last one */
+    .drop-group:last-child .drop-group__info {
+        height: auto;
+        color: var(--color-text-bg-dark);
+        padding: calc(var(--spacing)*11) calc(var(--spacing)*5) calc(var(--spacing)*5);
+        transform: scale(1);
+        opacity: 1;
+        width: calc(var(--spacing)*24);
+        background-position: center calc(var(--spacing)*5);
+    }
+    .drop-group .card-group__area {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        width: calc(var(--spacing)*2);
+        min-width: 0;
+        transition: width 500ms;
+    }
+    .app-groups.vddl-dragover .drop-group:last-child {
+        opacity: 0 !important;
+    }
+    .drop-group .vddl-dragover.card-group__area {
+        width: calc(var(--spacing)*12);
+    }
+    .drop-group .card-group__area:before { display: none; }
+    .drop-group .vddl-placeholder { display: none !important; }

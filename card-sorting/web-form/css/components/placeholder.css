@@ -1,0 +1,56 @@
+/************************
+* CARDS PLACEHOLDER
+************************/
+.card-group__area .vddl-placeholder:not(:last-child),
+.drop-group .vddl-placeholder {
+    /* height: auto; */
+    padding-bottom: calc(var(--spacing)/2);
+}
+/* placeholder simulates same style as card, for the height to match */
+.app-sidebar .vddl-placeholder:before,
+.card-group .vddl-placeholder:before {
+    content: "Place";
+    display: block;
+    background: var(--color-foreground);
+    color: transparent !important;
+    border: 1px solid transparent;
+    padding: var(--spacing) calc(var(--spacing)*2);
+    font-size: 14px;
+    color: transparent;
+    line-height: 1.2em;
+    text-align: center;
+    font-weight: 500;
+    box-sizing: border-box;
+    user-select: none;
+    box-sizing: border-box;
+}
+.app-sidebar .vddl-placeholder:before {
+    background-color: var(--color-text-bg-light) !important;
+}
+
+
+/************************
+* CARD GROUPS PLACEHOLDER
+************************/
+.app-groups > .vddl-placeholder {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 calc(var(--spacing)*2);
+    box-sizing: border-box;
+}
+.app-groups > .vddl-placeholder:before {
+    content: " ";
+    display: block;
+    min-width: var(--card-width);
+    background: var(--color-background);
+    background: var(--color-white);
+    border: 1px dashed var(--color-text-bg-dark);
+    height: calc(var(--spacing)*15.5);
+    border-radius: calc(var(--spacing)/2);
+}
+
+/* since drop-groups will still be present by not interactive, compensate their size */
+.app-groups > .vddl-placeholder:first-child { margin-left: calc(var(--spacing)*2); margin-right: calc(var(--spacing)*-2); }
+.app-groups > .drop-group + .vddl-placeholder:not(:first-child),
+.app-groups > .drop-group + .vddl-dragging-source + .vddl-placeholder { margin-left: calc(var(--spacing)*-2); }
+.app-groups > .vddl-placeholder + .drop-group { margin-left: calc(var(--spacing)*-2); }

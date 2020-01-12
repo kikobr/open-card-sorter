@@ -42,13 +42,16 @@
    border: 0;
 }
 .input input:disabled,
+.btn-primary--disabled,
 .btn-primary:disabled,
+.btn-secondary--disabled,
 .btn-secondary:disabled {
     cursor: no-drop;
     opacity: 0.5;
 }
 
 .input span:before,
+.btn-icon:before,
 .btn-primary:before,
 .btn-secondary:before {
     position: absolute;
@@ -64,6 +67,7 @@
     transition: box-shadow 250ms, opacity 250ms;
 }
 .input input:focus + span:before,
+.btn-icon:focus:before,
 .btn-primary:focus:before,
 .btn-secondary:focus:before {
     opacity: 0.5;

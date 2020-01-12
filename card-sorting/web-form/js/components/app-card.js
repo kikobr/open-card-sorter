@@ -16,10 +16,15 @@ Vue.component('app-card', {
             default: window.texts
         }
     },
+    methods: {
+        emitAction: function(action){
+            this.$emit(action);
+        },
+    },
     template: `
         <article class="app-card">
             <span class="app-card__name">{{card.name}}</span>
-            <span class="app-card__info" v-if="card.info" :data-info="card.info">
+            <span class="app-card__info" v-if="card.info" :data-info="card.info" @click="$emit('alert', { title: card.name, text: card.info })">
                 <img src="img/info.svg" alt="Informação" />
             </span>
         </article>

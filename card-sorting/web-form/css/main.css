@@ -2,6 +2,8 @@
 @import "variables.css";
 @import "components/button.css";
 @import "components/app.css";
+@import "components/placeholder.css";
+@import "components/app-card-groups.css";
 @import "components/app-card.css";
 @import "components/app-modal.css";
 @import "components/intro.css";

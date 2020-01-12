@@ -41,7 +41,7 @@ var texts = {
         {
             title: [`Passo 3`],
             text: [
-                `Revise os grupos e dê um nome para cada um que você criou. Pense em um título que represente os cartões contidos nele.`,
+                `Revise os grupos e <strong>dê um nome para cada um</strong> que você criou. Pense em um título que represente os cartões contidos nele.`,
             ]
         },
         {
@@ -57,6 +57,8 @@ var texts = {
             ]
         }
     ],
+    stepsRemainingTitle: [`Está faltando algum passo para você completar sua atividade`],
+    stepsRemainingText: [`Verifique se você completou a tarefa abaixo:`],
 
     endingTitle: [ `Obrigado%userNameComma!` ],
     endingText: [
@@ -71,6 +73,11 @@ var texts = {
     anonymousLabel: [ `Anônimo` ],
 
     alerts: {
+        generic: {
+            buttons: [
+                { class: [`btn-primary`], text: [`Fechar`], action: "close" }
+            ]
+        },
         steps: {
             title: [`Instruções`],
             buttons: [
