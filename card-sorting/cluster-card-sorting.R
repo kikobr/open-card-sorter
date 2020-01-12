@@ -136,7 +136,7 @@ getClusterTable <- function(hclust=NULL, k=2, index_df=NULL){
         # get non-NA values from indexes dataframe
         indexes <- index_df[card][!is.na(index_df[card])]
         median_index <- median(as.numeric(indexes))
-        median_index <- round(median_index, digits=1)
+        median_index <- round(median_index, digits=2)
         cards[i] = paste(median_index, card)
       }
       cards = sort(cards)
